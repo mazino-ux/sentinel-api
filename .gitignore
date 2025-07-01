@@ -1,0 +1,72 @@
+# ==================================
+# ✅ Essential Ignored Files & Folders
+# ==================================
+
+# Dependencies
+node_modules/
+
+# Environment Variables
+.env
+.env.*          # All env files, except example
+!.env.example   # Keep sample env file for sharing
+
+# Build Output (Node or Frontend build)
+dist/
+build/
+out/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime Data / Process IDs
+*.pid
+*.pid.lock
+
+# Cache & Temp
+.cache/
+tmp/
+temp/
+.local/
+
+# OS-specific files
+.DS_Store       # macOS
+Thumbs.db       # Windows
+
+# Editor / IDE Configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing Output
+coverage/
+.nyc_output/
+
+# Hosting / Deployment Platforms (optional but common)
+.vercel
+.netlify
+.serverless/
+
+
+# ==================================
+# 🧠 EXTRAS (Optional based on tooling)
+# ==================================
+
+# If using TypeScript
+# *.tsbuildinfo
+
+
+# If using React
+# .eslintcache
+
+# If using Docker
+# docker-compose.override.yml
+# docker-volume-data/
+
+# ==================================
+# ✅ End of .gitignore
+# ==================================
