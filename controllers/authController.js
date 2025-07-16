@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const { SignupSchema, LoginSchema } = require("../middlewares/validator");
 const User = require("../models/userModel");
-const { doHash, doHashValidation } = require("../utils/hashing");
+const { doHash, doHashValidation, hmacProcess } = require("../utils/hashing");
+const { transport } = require("../middlewares/sendMail");
 
 exports.signup = async(req, res) => {
     const {username, email, password } = req.body;
@@ -97,7 +98,7 @@ exports.logout = async(req, res) => {
      .json({success:true, message:'Logged out Successfully!'})
 }
 
-exports.sendVerificationCode = async(res, req) =>{
+exports.sendVerificationCode = async (req, res) =>{
     const {email} = req.body;
     try{
         const user = await User.findOne({email}).select("+verificationToken +verificationTokenValidation");
@@ -110,18 +111,23 @@ exports.sendVerificationCode = async(res, req) =>{
         }
 
         // Generate a verification token and validation time
-        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
-        const verificationTokenValidation = Date.now() + 10 * 60 * 1000; // Valid for 10 minutes
+        const codeValue = Math.floor(100000 + Math.random() * 900000).toString();
+        let info = await transport({
+           from: process.env.NODE_EMAIL_USER,
+           to: user.email,
+           subject: 'Verification Code',
+           html:'<h1> This is your Verification code:' + codeValue + '</h1>'
+        });
 
-        user.verificationToken = verificationToken;
-        user.verificationTokenValidation = verificationTokenValidation;
+        if (info.accepted[0] === user.email ){
+            const hashedCodeValue = hmacProcess(codeValue, process.env.HMAC_SECRET_CODE)
+            user.verificationToken = hashedCodeValue; 
+            user.verificationTokenValidation = Date.now();
+            await user.save();
+            return res.status(200).json({success:true, message: 'Verification code sent successfully!'});
+        }
+        res.status(400).json({success:false, message: 'Code sent Failed!'});
 
-        await user.save();
-
-        // Here you would send the verification code to the user's email
-        // For example, using a mailing service like Nodemailer or SendGrid
-
-        res.status(200).json({success: true, message: "Verification code sent successfully!"});
     }catch(error){
         console.error(error);
         return res.status(500).json({success: false, message: "Server error, please try again later."});
