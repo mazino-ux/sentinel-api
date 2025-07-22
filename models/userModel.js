@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema({
         minLength: [5, 'Email must be at least 5 characters'],
         lowercase: true
     },
+    role:{
+        type: String,
+        enum: ['user', 'admin', 'super_admin'], //Role-based access control
+        default: 'user'
+    },
     password: {
         type: String,
         required: [true, 'Password must be provided'],
@@ -50,6 +55,6 @@ const userSchema = new mongoose.Schema({
 
 module.exports = mongoose.model('User', userSchema);
 // This model defines the structure of the user document in MongoDB.
-// It includes fields for username, email, password, verification status, and tokens for verification and password reset.
+// It includes fields for role, username, email, password, verification status, and tokens for verification and password reset.
 // The schema also includes timestamps for created and updated times.
 // The model is exported for use in other parts of the application, such as controllers and services. and password reset functionalities.

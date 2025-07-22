@@ -1,18 +1,20 @@
-const ratelimit = require('express-rate-limit');
+const rateLimit = require("express-rate-limit"); 
 
-exports.createRateLimiter = (windowMinutes, maxRequests) => ({ //creating the rate limiter middleware
-    windowMs: windowMinutes * 60 * 1000, //how long the rate limiting window should last, in milliseconds
-    max: maxRequests, //max number of requests allowed in the time windowen the limit is exceeded
+const createRateLimiter = (windowMinutes, maxRequests) => { 
+    return rateLimit({ //creating the rate limiter middleware
+        windowMs: windowMinutes * 60 * 1000, //how long the rate limiting window should last, in milliseconds
+        max: maxRequests, //max number of requests allowed in the time windowen the limit is exceeded
 
-    handlers: (req, res) => { //if individual request exceeds the limit respond with a 429 status code
-        res.status(429).json({
-            success: false,
-            message: `Too many requests, please try again after ${windowMinutes} minutes.`
-        })
-    },
-    standardHeaders: true, //this is a more modern way to send rate limit information in the headers, so we enable it
-    legacyHeaders: false //legacy headers are deprecated, so we disable them, by setting it to false
-});
+        handlers: (req, res) => { //if individual request exceeds the limit respond with a 429 status code
+            res.status(429).json({
+                success: false,
+                message: `Too many requests, please try again after ${windowMinutes} minutes.`
+            })
+        },
+        standardHeaders: true, //this is a more modern way to send rate limit information in the headers, so we enable it
+        legacyHeaders: false //legacy headers are deprecated, so we disable them, by setting it to false
+    });
+};
 
 exports.loginLimiter = createRateLimiter( //this helps prevent brute force attacks on the login endpoint
     process.env.LOGIN_RATE_LIMIT_WINDOW || 15, //default to 15 minutes if not set

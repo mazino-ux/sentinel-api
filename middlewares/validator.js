@@ -1,5 +1,18 @@
 const Joi = require('joi');
 
+const emailSchema = Joi.string()
+                    .min(5)
+                    .max(255)
+                    .required()
+                    .email({
+                        tlds: { allow: ['com', 'net', 'org', 'edu', 'io'] }
+                    })
+                    .messages({
+                        'string.email': 'Please enter a valid email address',
+                        'string.empty': 'Email cannot be empty',
+                        'any.required': 'Email is required'
+                    })
+
 const passwordSchema = Joi.string()
                         .min(6).max(1024)
                         .required()
@@ -18,30 +31,23 @@ exports.SignupSchema = Joi.object({
                 .messages({
                     'string.pattern.base': 'Username can only contain letters, numbers, and underscores'
                 }),
-    email: Joi.string()
-        .min(5)
-        .max(255)
-        .required()
-        .email({
-            tlds: { allow: ['com', 'net', 'org', 'edu', 'io'] }
-        })
-        .messages({
-            'string.email': 'Please enter a valid email address',
-            'string.empty': 'Email cannot be empty',
-            'any.required': 'Email is required'
-        }),
+    email: emailSchema,
     password: passwordSchema  
 })
 
 exports.LoginSchema = Joi.object({
     username: Joi.string().min(3),
-    email: Joi.string()
-        .min(5).max(255)     
-        .email({
-            tlds: {allow : ['com', 'net', 'org', 'edu']}
-        }),
+    email: emailSchema,
         password: passwordSchema
 }).or('username', 'email')
   .messages({
     'object.missing': 'Either username or email must be provided'
+});
+
+exports.verificationSchema = Joi.object({
+    email: emailSchema,
+    code: Joi.number().required()
+}).messages({
+    'string.length': 'Verification code must be exactly 6 characters long',
+    'any.required': 'Verification code is required'
 });

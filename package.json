@@ -19,7 +19,8 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1",
-    "nodemailer": "^7.0.4"
+    "nodemailer": "^7.0.4",
+    "resend": "^4.7.0"
   },
   "devDependencies": {
     "@express-rate-limit/tsconfig": "^1.0.2"
