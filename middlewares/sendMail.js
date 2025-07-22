@@ -1,14 +1,13 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transport = nodemailer.createTransport({
-    service: 'gmail', // Use your email service provider
-    auth: {
-        user: process.env.NODE_EMAIL_ADDRESS, // Your email address
-        pass: process.env.NODE_EMAIL_PASS  // Your email password 
-    },
-    secure: true, // Use TLS
-});
+const sendVerificationEmail = async (to, code) => {
+  return await resend.emails.send({
+    from: 'Auth System <onboarding@resend.dev>', // Resend default sender
+    to,
+    subject: 'Verification Code',
+    html: `<h1>Your code: ${code}</h1><p>This code expires in 10 minutes.</p>`
+  });
+};
 
-module.exports = transport;
-// This code sets up a Nodemailer transporter for sending emails.
-// It uses Gmail as the email service provider and authenticates with the provided email address and password.
+module.exports = sendVerificationEmail;
