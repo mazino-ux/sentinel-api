@@ -39,7 +39,7 @@ exports.signup = async(req, res) => {
     }
 }
 
-exports.login = [ loginLimiter, async(req, res) => {  // applying login limiter middleware to the login staye
+exports.login = [ loginLimiter, async(req, res) => {  // applying login limiter middleware to the login state
     const {username, email, password} = req.body; //The request body expected from the client/frontend
 
     try{
